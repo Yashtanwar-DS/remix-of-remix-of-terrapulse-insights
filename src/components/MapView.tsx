@@ -47,7 +47,8 @@ export function MapView({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {events.map((e) => {
+        {/* Draw lowest risk first so high-risk markers stay clickable on top. */}
+        {[...events].sort((a, b) => a.riskScore - b.riskScore).map((e) => {
           const level = riskLevel(e.riskScore);
           const radius = Math.max(6, Math.min(18, Math.round(e.frp / 3) + 6));
           const color = CLASS_COLOR[e.probableClass];
