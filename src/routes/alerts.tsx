@@ -1,10 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { BellRing, Mail, MessageSquare, Smartphone } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { BellRing, Mail, MessageSquare, Smartphone, CheckCircle2, Ban, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
 import { useTerraPulse } from "@/hooks/useTerraPulse";
-import { prioritise } from "@/services/riskService";
+import { prioritise, escalation } from "@/services/riskService";
 import { buildNotification, channelStatus, type Channel } from "@/services/notificationService";
 import { riskLevel, formatDateTime } from "@/utils/labels";
-import { ClassBadge, RiskBadge } from "@/components/badges";
+import { ClassBadge, ConfidenceBadge, RiskBadge, StatusBadge } from "@/components/badges";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
