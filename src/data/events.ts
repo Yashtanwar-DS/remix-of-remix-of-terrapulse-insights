@@ -34,7 +34,22 @@ type Seed = {
 // These do NOT represent actual current fires or confirmed incidents.
 const SEEDS: Seed[] = [
   // --- Industrial-fire-like (Gujarat / Maharashtra / Odisha) ---
-  { id: "TP-1042", latitude: 22.3512, longitude: 70.0603, hoursAgo: 6, frp: 45, bt: 331, sensor: "VIIRS S-NPP", region: "Gujarat", persistenceCount: 3, landCover: "Industrial", road: "SH-25 Jamnagar Bypass", settlement: "Sikka (4.2 km)" },
+  {
+    id: "TP-1042", latitude: 22.3512, longitude: 70.0603, hoursAgo: 6, frp: 45, bt: 331,
+    sensor: "VIIRS S-NPP", region: "Gujarat", persistenceCount: 3, landCover: "Industrial",
+    road: "SH-25 Jamnagar Bypass", settlement: "Sikka (4.2 km)",
+    demo: {
+      facilityDistance: 420,
+      confidence: 0.89,
+      riskScore: 82,
+      probabilities: [
+        { probableClass: "INDUSTRIAL_FIRE", probability: 0.89 },
+        { probableClass: "GAS_FLARE", probability: 0.06 },
+        { probableClass: "PERSISTENT_INDUSTRIAL_HEAT", probability: 0.03 },
+        { probableClass: "UNCLASSIFIED", probability: 0.02 },
+      ],
+    },
+  },
   { id: "TP-1043", latitude: 21.1129, longitude: 72.6551, hoursAgo: 11, frp: 52, bt: 338, sensor: "VIIRS NOAA-20", region: "Gujarat", persistenceCount: 2, landCover: "Industrial", road: "Hazira Port Road", settlement: "Hazira (2.1 km)" },
   { id: "TP-1044", latitude: 19.0041, longitude: 72.9037, hoursAgo: 20, frp: 38, bt: 329, sensor: "MODIS Aqua", region: "Maharashtra", persistenceCount: 3, landCover: "Industrial", road: "Mahul Road", settlement: "Chembur (3.0 km)" },
   { id: "TP-1045", latitude: 20.8412, longitude: 85.1041, hoursAgo: 30, frp: 61, bt: 344, sensor: "VIIRS S-NPP", region: "Odisha", persistenceCount: 2, landCover: "Industrial", road: "NH-55", settlement: "Angul (6.4 km)" },
