@@ -154,6 +154,8 @@ export function buildDemoEvents(now: Date = new Date()): ThermalEvent[] {
         { at: detectedAt.toISOString(), action: "Thermal anomaly ingested from demo dataset" },
       ],
       spatiallyExpanding: seed.expanding ?? false,
+      probabilities: seed.demo?.probabilities ?? classification.probabilities,
+      explanationFactors: classification.explanationFactors,
     } satisfies ThermalEvent;
   });
 }
