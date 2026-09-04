@@ -17,13 +17,39 @@ type Seed = {
   road: string;
   settlement: string;
   expanding?: boolean;
+  /**
+   * Presentation override for the primary demo event. Keeps the live demo
+   * numbers stable and easy to narrate while the same deterministic
+   * classification engine still produces every other event.
+   */
+  demo?: {
+    facilityDistance: number;
+    confidence: number;
+    riskScore: number;
+    probabilities: { probableClass: ThermalEvent["probableClass"]; probability: number }[];
+  };
 };
 
 // DEMO DATA — synthetic coordinates for prototype demonstration only.
 // These do NOT represent actual current fires or confirmed incidents.
 const SEEDS: Seed[] = [
   // --- Industrial-fire-like (Gujarat / Maharashtra / Odisha) ---
-  { id: "TP-1042", latitude: 22.3512, longitude: 70.0603, hoursAgo: 6, frp: 45, bt: 331, sensor: "VIIRS S-NPP", region: "Gujarat", persistenceCount: 3, landCover: "Industrial", road: "SH-25 Jamnagar Bypass", settlement: "Sikka (4.2 km)" },
+  {
+    id: "TP-1042", latitude: 22.3512, longitude: 70.0603, hoursAgo: 6, frp: 45, bt: 331,
+    sensor: "VIIRS S-NPP", region: "Gujarat", persistenceCount: 3, landCover: "Industrial",
+    road: "SH-25 Jamnagar Bypass", settlement: "Sikka (4.2 km)",
+    demo: {
+      facilityDistance: 420,
+      confidence: 0.89,
+      riskScore: 82,
+      probabilities: [
+        { probableClass: "INDUSTRIAL_FIRE", probability: 0.89 },
+        { probableClass: "GAS_FLARE", probability: 0.06 },
+        { probableClass: "PERSISTENT_INDUSTRIAL_HEAT", probability: 0.03 },
+        { probableClass: "UNCLASSIFIED", probability: 0.02 },
+      ],
+    },
+  },
   { id: "TP-1043", latitude: 21.1129, longitude: 72.6551, hoursAgo: 11, frp: 52, bt: 338, sensor: "VIIRS NOAA-20", region: "Gujarat", persistenceCount: 2, landCover: "Industrial", road: "Hazira Port Road", settlement: "Hazira (2.1 km)" },
   { id: "TP-1044", latitude: 19.0041, longitude: 72.9037, hoursAgo: 20, frp: 38, bt: 329, sensor: "MODIS Aqua", region: "Maharashtra", persistenceCount: 3, landCover: "Industrial", road: "Mahul Road", settlement: "Chembur (3.0 km)" },
   { id: "TP-1045", latitude: 20.8412, longitude: 85.1041, hoursAgo: 30, frp: 61, bt: 344, sensor: "VIIRS S-NPP", region: "Odisha", persistenceCount: 2, landCover: "Industrial", road: "NH-55", settlement: "Angul (6.4 km)" },
@@ -68,8 +94,12 @@ const OBSERVATION_WINDOW_DAYS = 7;
 
 function buildHistory(seed: Seed, base: Date): Detection[] {
   const out: Detection[] = [];
+  // Spread the detections evenly across the observation window so the
+  // persistence timeline reads Day 1 → Day 3 → Day 7 for a 3-in-7 event.
+  const span = OBSERVATION_WINDOW_DAYS - 1;
+  const step = seed.persistenceCount > 1 ? span / (seed.persistenceCount - 1) : 0;
   for (let i = seed.persistenceCount - 1; i >= 0; i--) {
-    const t = new Date(base.getTime() - i * 1.6 * 24 * 3600 * 1000);
+    const t = new Date(base.getTime() - i * step * 24 * 3600 * 1000);
     const jitter = ((seed.id.charCodeAt(4) + i * 7) % 11) / 10 - 0.5;
     out.push({
       timestamp: t.toISOString(),
@@ -88,10 +118,12 @@ export function buildDemoEvents(now: Date = new Date()): ThermalEvent[] {
       buildHistory(seed, detectedAt).map((d) => d.timestamp.slice(0, 10)),
     ).size;
 
+    const facilityDistance = seed.demo?.facilityDistance ?? match.distance;
+
     const classification = classifyThermalEvent({
       frp: seed.frp,
       brightnessTemperature: seed.bt,
-      facilityDistance: match.distance,
+      facilityDistance,
       facilityType: match.facility.type,
       persistenceCount: seed.persistenceCount,
       observationWindowDays: OBSERVATION_WINDOW_DAYS,
@@ -108,16 +140,16 @@ export function buildDemoEvents(now: Date = new Date()): ThermalEvent[] {
       brightnessTemperature: seed.bt,
       sensor: seed.sensor,
       region: seed.region,
-      probableClass: classification.probableClass,
-      confidence: classification.confidence,
-      riskScore: classification.riskScore,
+      probableClass: seed.demo ? seed.demo.probabilities[0]!.probableClass : classification.probableClass,
+      confidence: seed.demo?.confidence ?? classification.confidence,
+      riskScore: seed.demo?.riskScore ?? classification.riskScore,
       persistenceCount: seed.persistenceCount,
       observationWindowDays: OBSERVATION_WINDOW_DAYS,
       activeDays,
       landCover: seed.landCover,
       facilityType: match.facility.type,
       facilityName: match.facility.name,
-      facilityDistance: Math.round(match.distance),
+      facilityDistance: Math.round(facilityDistance),
       verificationStatus: seed.verificationStatus ?? "REQUIRES_VERIFICATION",
       nearbyRoad: seed.road,
       nearbySettlement: seed.settlement,
@@ -126,6 +158,8 @@ export function buildDemoEvents(now: Date = new Date()): ThermalEvent[] {
         { at: detectedAt.toISOString(), action: "Thermal anomaly ingested from demo dataset" },
       ],
       spatiallyExpanding: seed.expanding ?? false,
+      probabilities: seed.demo?.probabilities ?? classification.probabilities,
+      explanationFactors: classification.explanationFactors,
     } satisfies ThermalEvent;
   });
 }

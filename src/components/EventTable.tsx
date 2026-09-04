@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { CheckCircle2, Ban, Eye, History } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { CheckCircle2, Ban, Eye, History, ExternalLink } from "lucide-react";
 import type { ThermalEvent, VerificationStatus } from "@/types";
 import { formatDateTime, formatDistance, persistenceBand } from "@/utils/labels";
 import { ClassBadge, ConfidenceBadge, RiskBadge, StatusBadge } from "@/components/badges";
@@ -88,6 +89,11 @@ export function EventTable({
               <td className="px-3 py-2.5 align-top"><StatusBadge status={e.verificationStatus} /></td>
               <td className="px-3 py-2.5 align-top">
                 <div className="flex justify-end gap-1">
+                  <Button asChild size="icon" variant="ghost" className="h-7 w-7" title="Open event details">
+                    <Link to="/events/$id" params={{ id: e.id }} onClick={(ev) => ev.stopPropagation()}>
+                      <ExternalLink className="h-4 w-4 text-primary" />
+                    </Link>
+                  </Button>
                   {ctx ? (
                     ACTIONS.map((a) => (
                       <Button

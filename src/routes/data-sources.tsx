@@ -49,6 +49,27 @@ function DataSourcesPage() {
         </p>
       </div>
 
+      <div className="rounded-lg border border-primary/25 bg-primary/5 p-4">
+        <p className="text-sm font-medium text-foreground">
+          FIRMS detects thermal anomalies; TerraPulse uses additional context to classify their probable source.
+        </p>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {[
+          { name: "NASA FIRMS", role: "Thermal anomaly observations" },
+          { name: "VIIRS / MODIS", role: "Satellite fire / thermal observations" },
+          { name: "OpenStreetMap", role: "Industrial and geographic context" },
+          { name: "Sentinel-2 / Landsat", role: "Satellite imagery context" },
+          { name: "Land cover", role: "Surrounding land-use context" },
+        ].map((s) => (
+          <div key={s.name} className="rounded-lg border border-border bg-card p-3 shadow-xs">
+            <p className="text-sm font-semibold text-foreground">{s.name}</p>
+            <p className="text-xs text-muted-foreground">→ {s.role}</p>
+          </div>
+        ))}
+      </div>
+
       <div className="grid gap-5 md:grid-cols-2">
         <Card>
           <CardHeader>

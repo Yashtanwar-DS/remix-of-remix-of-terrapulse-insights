@@ -1,8 +1,10 @@
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip } from "react-leaflet";
 import L from "leaflet";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import type { ThermalEvent } from "@/types";
-import { CLASS_COLOR, CLASS_LABELS, formatDistance, formatDateTime, riskLevel } from "@/utils/labels";
+import { CLASS_COLOR, CLASS_LABELS, STATUS_LABELS, formatDistance, formatDateTime, riskLevel } from "@/utils/labels";
 import { ClassBadge, RiskBadge } from "@/components/badges";
 
 // Fix Leaflet's default icon path resolution under bundlers (unused by
@@ -45,7 +47,8 @@ export function MapView({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {events.map((e) => {
+        {/* Draw lowest risk first so high-risk markers stay clickable on top. */}
+        {[...events].sort((a, b) => a.riskScore - b.riskScore).map((e) => {
           const level = riskLevel(e.riskScore);
           const radius = Math.max(6, Math.min(18, Math.round(e.frp / 3) + 6));
           const color = CLASS_COLOR[e.probableClass];
@@ -67,20 +70,31 @@ export function MapView({
               <Tooltip>
                 <strong>{e.id}</strong> · {CLASS_LABELS[e.probableClass]}
               </Tooltip>
-              <Popup>
+              <Popup minWidth={250}>
                 <div className="space-y-1.5 text-xs">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold text-foreground">{e.id}</span>
+                    <span className="font-mono text-sm font-semibold text-foreground">{e.id}</span>
                     <RiskBadge score={e.riskScore} />
                   </div>
                   <ClassBadge probableClass={e.probableClass} />
                   <dl className="space-y-0.5 text-muted-foreground">
-                    <div><dt className="inline font-medium text-foreground">Region: </dt><dd className="inline">{e.region}</dd></div>
-                    <div><dt className="inline font-medium text-foreground">Detected: </dt><dd className="inline">{formatDateTime(e.timestamp)}</dd></div>
+                    <div><dt className="inline font-medium text-foreground">Confidence: </dt><dd className="inline">{Math.round(e.confidence * 100)}%</dd></div>
                     <div><dt className="inline font-medium text-foreground">FRP: </dt><dd className="inline">{e.frp} MW</dd></div>
+                    <div><dt className="inline font-medium text-foreground">Detected: </dt><dd className="inline">{formatDateTime(e.timestamp)}</dd></div>
                     <div><dt className="inline font-medium text-foreground">Sensor: </dt><dd className="inline">{e.sensor}</dd></div>
-                    <div><dt className="inline font-medium text-foreground">Facility: </dt><dd className="inline">{e.facilityName} ({formatDistance(e.facilityDistance)})</dd></div>
+                    <div><dt className="inline font-medium text-foreground">Nearest facility: </dt><dd className="inline">{e.facilityName} ({e.facilityType})</dd></div>
+                    <div><dt className="inline font-medium text-foreground">Distance: </dt><dd className="inline">{formatDistance(e.facilityDistance)}</dd></div>
+                    <div><dt className="inline font-medium text-foreground">Persistence: </dt><dd className="inline">{e.persistenceCount} detections / {e.observationWindowDays} days</dd></div>
+                    <div><dt className="inline font-medium text-foreground">Risk score: </dt><dd className="inline">{e.riskScore}/100</dd></div>
+                    <div><dt className="inline font-medium text-foreground">Status: </dt><dd className="inline">{STATUS_LABELS[e.verificationStatus]}</dd></div>
                   </dl>
+                  <Link
+                    to="/events/$id"
+                    params={{ id: e.id }}
+                    className="inline-flex items-center gap-1 pt-1 font-semibold text-primary hover:underline"
+                  >
+                    Open event details <ArrowRight className="h-3 w-3" />
+                  </Link>
                 </div>
               </Popup>
             </CircleMarker>

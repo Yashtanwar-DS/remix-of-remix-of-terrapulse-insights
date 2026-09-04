@@ -59,7 +59,7 @@ export function ClassBadge({
 export function DemoBadge({ className }: { className?: string }) {
   return (
     <span className={cn(base, "border-risk-low/30 bg-risk-low/10 text-risk-low", className)}>
-      Demo Data
+      Demo Mode
     </span>
   );
 }

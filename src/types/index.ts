@@ -72,6 +72,8 @@ export interface ThermalEvent {
   history: Detection[];
   auditLog: { at: string; action: string }[];
   spatiallyExpanding: boolean;
+  probabilities: { probableClass: ProbableClass; probability: number }[];
+  explanationFactors: { factor: string; detail: string; weight: number }[];
 }
 
 export interface ClassificationResult {

@@ -1,10 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { BellRing, Mail, MessageSquare, Smartphone } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { BellRing, Mail, MessageSquare, Smartphone, CheckCircle2, Ban, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
 import { useTerraPulse } from "@/hooks/useTerraPulse";
-import { prioritise } from "@/services/riskService";
+import { prioritise, escalation } from "@/services/riskService";
 import { buildNotification, channelStatus, type Channel } from "@/services/notificationService";
 import { riskLevel, formatDateTime } from "@/utils/labels";
-import { ClassBadge, RiskBadge } from "@/components/badges";
+import { ClassBadge, ConfidenceBadge, RiskBadge, StatusBadge } from "@/components/badges";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +32,7 @@ const CHANNEL_ICON: Record<Channel, typeof BellRing> = {
 };
 
 function AlertsPage() {
-  const { events } = useTerraPulse();
+  const { events, setStatus } = useTerraPulse();
   const channels = channelStatus();
   const actionable = prioritise(events).filter(
     (e) => riskLevel(e.riskScore) !== "LOW",
@@ -42,7 +44,8 @@ function AlertsPage() {
       <div>
         <h2 className="text-lg font-semibold text-foreground">Alerts</h2>
         <p className="text-sm text-muted-foreground">
-          {notifications.length} actionable alerts (medium / high risk). Only in-app delivery is active in the prototype.
+          {notifications.length} actionable alerts (medium / high risk). Escalation: HIGH → immediate attention,
+          MEDIUM → review, LOW → monitor. Only in-app delivery is active in the prototype — no real SMS or email is sent.
         </p>
       </div>
 
@@ -68,13 +71,44 @@ function AlertsPage() {
                   </div>
                   <RiskBadge score={event.riskScore} />
                 </div>
-                <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border/60 pt-3 text-xs text-muted-foreground">
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   <ClassBadge probableClass={event.probableClass} />
-                  <span>{event.region}</span>
-                  <span>·</span>
-                  <span>{formatDateTime(event.timestamp)}</span>
-                  <span>·</span>
-                  <span>{event.facilityName}</span>
+                  <ConfidenceBadge value={event.confidence} />
+                  <StatusBadge status={event.verificationStatus} />
+                </div>
+                <p className="mt-2 text-xs font-medium text-foreground">
+                  {escalation(n.level).label} — {escalation(n.level).detail}
+                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border/60 pt-3 text-xs text-muted-foreground">
+                  <Button asChild size="sm" variant="outline" className="h-7 gap-1.5">
+                    <Link to="/events/$id" params={{ id: event.id }}>
+                      <ExternalLink className="h-3.5 w-3.5" /> View Event
+                    </Link>
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-7 gap-1.5"
+                    disabled={event.verificationStatus === "HUMAN_VERIFIED"}
+                    onClick={() => {
+                      setStatus(event.id, "HUMAN_VERIFIED");
+                      toast.success(`${event.id} — status set to Human Verified`);
+                    }}
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" /> Verify
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 gap-1.5"
+                    disabled={event.verificationStatus === "DISMISSED"}
+                    onClick={() => {
+                      setStatus(event.id, "DISMISSED");
+                      toast.success(`${event.id} — status set to Dismissed`);
+                    }}
+                  >
+                    <Ban className="h-3.5 w-3.5" /> Dismiss
+                  </Button>
+                  <span className="ml-auto">{event.region} · {formatDateTime(event.timestamp)} · {event.facilityName}</span>
                 </div>
               </div>
             );
