@@ -94,8 +94,12 @@ const OBSERVATION_WINDOW_DAYS = 7;
 
 function buildHistory(seed: Seed, base: Date): Detection[] {
   const out: Detection[] = [];
+  // Spread the detections evenly across the observation window so the
+  // persistence timeline reads Day 1 → Day 3 → Day 7 for a 3-in-7 event.
+  const span = OBSERVATION_WINDOW_DAYS - 1;
+  const step = seed.persistenceCount > 1 ? span / (seed.persistenceCount - 1) : 0;
   for (let i = seed.persistenceCount - 1; i >= 0; i--) {
-    const t = new Date(base.getTime() - i * 1.6 * 24 * 3600 * 1000);
+    const t = new Date(base.getTime() - i * step * 24 * 3600 * 1000);
     const jitter = ((seed.id.charCodeAt(4) + i * 7) % 11) / 10 - 0.5;
     out.push({
       timestamp: t.toISOString(),
