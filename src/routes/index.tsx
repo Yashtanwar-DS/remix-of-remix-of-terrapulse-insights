@@ -7,6 +7,7 @@ import { WorkflowStrip } from "@/components/WorkflowStrip";
 import { EventTable } from "@/components/EventTable";
 import { FiltersPanel } from "@/components/FiltersPanel";
 import { ClientOnly } from "@/components/ClientOnly";
+import { DemoBadge } from "@/components/badges";
 import { prioritise } from "@/services/riskService";
 import { riskLevel } from "@/utils/labels";
 import { Link } from "@tanstack/react-router";
