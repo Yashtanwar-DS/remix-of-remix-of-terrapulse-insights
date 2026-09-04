@@ -1,8 +1,10 @@
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip } from "react-leaflet";
 import L from "leaflet";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import type { ThermalEvent } from "@/types";
-import { CLASS_COLOR, CLASS_LABELS, formatDistance, formatDateTime, riskLevel } from "@/utils/labels";
+import { CLASS_COLOR, CLASS_LABELS, STATUS_LABELS, formatDistance, formatDateTime, riskLevel } from "@/utils/labels";
 import { ClassBadge, RiskBadge } from "@/components/badges";
 
 // Fix Leaflet's default icon path resolution under bundlers (unused by
