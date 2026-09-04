@@ -17,6 +17,17 @@ type Seed = {
   road: string;
   settlement: string;
   expanding?: boolean;
+  /**
+   * Presentation override for the primary demo event. Keeps the live demo
+   * numbers stable and easy to narrate while the same deterministic
+   * classification engine still produces every other event.
+   */
+  demo?: {
+    facilityDistance: number;
+    confidence: number;
+    riskScore: number;
+    probabilities: { probableClass: ThermalEvent["probableClass"]; probability: number }[];
+  };
 };
 
 // DEMO DATA — synthetic coordinates for prototype demonstration only.
