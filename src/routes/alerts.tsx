@@ -44,7 +44,8 @@ function AlertsPage() {
       <div>
         <h2 className="text-lg font-semibold text-foreground">Alerts</h2>
         <p className="text-sm text-muted-foreground">
-          {notifications.length} actionable alerts (medium / high risk). Only in-app delivery is active in the prototype.
+          {notifications.length} actionable alerts (medium / high risk). Escalation: HIGH → immediate attention,
+          MEDIUM → review, LOW → monitor. Only in-app delivery is active in the prototype — no real SMS or email is sent.
         </p>
       </div>
 
