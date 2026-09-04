@@ -32,7 +32,7 @@ const CHANNEL_ICON: Record<Channel, typeof BellRing> = {
 };
 
 function AlertsPage() {
-  const { events } = useTerraPulse();
+  const { events, setStatus } = useTerraPulse();
   const channels = channelStatus();
   const actionable = prioritise(events).filter(
     (e) => riskLevel(e.riskScore) !== "LOW",
