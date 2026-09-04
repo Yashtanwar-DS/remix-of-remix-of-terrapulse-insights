@@ -68,13 +68,44 @@ function AlertsPage() {
                   </div>
                   <RiskBadge score={event.riskScore} />
                 </div>
-                <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border/60 pt-3 text-xs text-muted-foreground">
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   <ClassBadge probableClass={event.probableClass} />
-                  <span>{event.region}</span>
-                  <span>·</span>
-                  <span>{formatDateTime(event.timestamp)}</span>
-                  <span>·</span>
-                  <span>{event.facilityName}</span>
+                  <ConfidenceBadge value={event.confidence} />
+                  <StatusBadge status={event.verificationStatus} />
+                </div>
+                <p className="mt-2 text-xs font-medium text-foreground">
+                  {escalation(n.level).label} — {escalation(n.level).detail}
+                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border/60 pt-3 text-xs text-muted-foreground">
+                  <Button asChild size="sm" variant="outline" className="h-7 gap-1.5">
+                    <Link to="/events/$id" params={{ id: event.id }}>
+                      <ExternalLink className="h-3.5 w-3.5" /> View Event
+                    </Link>
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-7 gap-1.5"
+                    disabled={event.verificationStatus === "HUMAN_VERIFIED"}
+                    onClick={() => {
+                      setStatus(event.id, "HUMAN_VERIFIED");
+                      toast.success(`${event.id} — status set to Human Verified`);
+                    }}
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" /> Verify
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 gap-1.5"
+                    disabled={event.verificationStatus === "DISMISSED"}
+                    onClick={() => {
+                      setStatus(event.id, "DISMISSED");
+                      toast.success(`${event.id} — status set to Dismissed`);
+                    }}
+                  >
+                    <Ban className="h-3.5 w-3.5" /> Dismiss
+                  </Button>
+                  <span className="ml-auto">{event.region} · {formatDateTime(event.timestamp)} · {event.facilityName}</span>
                 </div>
               </div>
             );
