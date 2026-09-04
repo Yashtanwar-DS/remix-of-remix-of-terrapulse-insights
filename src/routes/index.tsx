@@ -35,19 +35,24 @@ function Dashboard() {
   const total = events.length;
   const highRisk = events.filter((e) => riskLevel(e.riskScore) === "HIGH").length;
   const persistent = events.filter((e) => e.persistenceCount >= 4).length;
-  const needsAction = events.filter(
-    (e) => e.verificationStatus === "REQUIRES_VERIFICATION" || e.verificationStatus === "NEEDS_REVIEW",
-  ).length;
+  const industrial = events.filter((e) => e.probableClass === "INDUSTRIAL_FIRE").length;
 
   const sorted = prioritise(filtered);
 
   return (
     <div className="space-y-5">
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-risk-medium/30 bg-risk-medium/5 px-3 py-2">
+        <DemoBadge />
+        <p className="text-xs text-muted-foreground">
+          Demo data is used for this prototype. FIRMS thermal anomalies are not automatically confirmed fires.
+        </p>
+      </div>
+
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <KpiCard label="Total Detections" value={total} hint="In 7-day observation window" icon={Activity} />
-        <KpiCard label="High Risk" value={highRisk} hint="Risk score ≥ 80" icon={Flame} tone="high" />
-        <KpiCard label="Persistent Sources" value={persistent} hint="≥ 4 detections" icon={Clock} tone="medium" />
-        <KpiCard label="Needs Action" value={needsAction} hint="Awaiting verification" icon={ShieldAlert} tone={needsAction > 0 ? "high" : "ok"} />
+        <KpiCard label="Active Thermal Anomalies" value={total} hint="In 7-day observation window" icon={Activity} />
+        <KpiCard label="Possible Industrial Fires" value={industrial} hint="Probable source classification" icon={Flame} tone="high" />
+        <KpiCard label="Persistent Thermal Sources" value={persistent} hint="≥ 4 detections in window" icon={Clock} tone="medium" />
+        <KpiCard label="High-Risk Events" value={highRisk} hint="Risk score ≥ 80" icon={ShieldAlert} tone={highRisk > 0 ? "high" : "ok"} />
       </div>
 
       <WorkflowStrip />
