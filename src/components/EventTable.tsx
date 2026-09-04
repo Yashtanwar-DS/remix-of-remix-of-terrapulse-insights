@@ -88,6 +88,11 @@ export function EventTable({
               <td className="px-3 py-2.5 align-top"><StatusBadge status={e.verificationStatus} /></td>
               <td className="px-3 py-2.5 align-top">
                 <div className="flex justify-end gap-1">
+                  <Button asChild size="icon" variant="ghost" className="h-7 w-7" title="Open event details">
+                    <Link to="/events/$id" params={{ id: e.id }} onClick={(ev) => ev.stopPropagation()}>
+                      <ExternalLink className="h-4 w-4 text-primary" />
+                    </Link>
+                  </Button>
                   {ctx ? (
                     ACTIONS.map((a) => (
                       <Button
