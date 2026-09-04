@@ -114,10 +114,12 @@ export function buildDemoEvents(now: Date = new Date()): ThermalEvent[] {
       buildHistory(seed, detectedAt).map((d) => d.timestamp.slice(0, 10)),
     ).size;
 
+    const facilityDistance = seed.demo?.facilityDistance ?? match.distance;
+
     const classification = classifyThermalEvent({
       frp: seed.frp,
       brightnessTemperature: seed.bt,
-      facilityDistance: match.distance,
+      facilityDistance,
       facilityType: match.facility.type,
       persistenceCount: seed.persistenceCount,
       observationWindowDays: OBSERVATION_WINDOW_DAYS,
