@@ -145,7 +145,7 @@ export function buildDemoEvents(now: Date = new Date()): ThermalEvent[] {
       landCover: seed.landCover,
       facilityType: match.facility.type,
       facilityName: match.facility.name,
-      facilityDistance: Math.round(match.distance),
+      facilityDistance: Math.round(facilityDistance),
       verificationStatus: seed.verificationStatus ?? "REQUIRES_VERIFICATION",
       nearbyRoad: seed.road,
       nearbySettlement: seed.settlement,
