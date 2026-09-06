@@ -96,6 +96,8 @@ export function TerraPulseProvider({ children }: { children: ReactNode }) {
     mode,
     lastUpdated,
     loading,
+    notice,
+    sources,
     refresh,
     setStatus,
     filters,
