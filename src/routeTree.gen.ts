@@ -15,6 +15,7 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as DataSourcesRouteImport } from './routes/data-sources'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as EventsIdRouteImport } from './routes/events.$id'
+import { Route as ApiFirmsHotspotsRouteImport } from './routes/api/firms/hotspots'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const EventsIdRoute = EventsIdRouteImport.update({
   path: '/events/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiFirmsHotspotsRoute = ApiFirmsHotspotsRouteImport.update({
+  id: '/api/firms/hotspots',
+  path: '/api/firms/hotspots',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/data-sources': typeof DataSourcesRoute
   '/map': typeof MapRoute
   '/events/$id': typeof EventsIdRoute
+  '/api/firms/hotspots': typeof ApiFirmsHotspotsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/data-sources': typeof DataSourcesRoute
   '/map': typeof MapRoute
   '/events/$id': typeof EventsIdRoute
+  '/api/firms/hotspots': typeof ApiFirmsHotspotsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,13 +79,27 @@ export interface FileRoutesById {
   '/data-sources': typeof DataSourcesRoute
   '/map': typeof MapRoute
   '/events/$id': typeof EventsIdRoute
+  '/api/firms/hotspots': typeof ApiFirmsHotspotsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/alerts' | '/analytics' | '/data-sources' | '/map' | '/events/$id'
+    | '/'
+    | '/alerts'
+    | '/analytics'
+    | '/data-sources'
+    | '/map'
+    | '/events/$id'
+    | '/api/firms/hotspots'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/alerts' | '/analytics' | '/data-sources' | '/map' | '/events/$id'
+  to:
+    | '/'
+    | '/alerts'
+    | '/analytics'
+    | '/data-sources'
+    | '/map'
+    | '/events/$id'
+    | '/api/firms/hotspots'
   id:
     | '__root__'
     | '/'
@@ -86,6 +108,7 @@ export interface FileRouteTypes {
     | '/data-sources'
     | '/map'
     | '/events/$id'
+    | '/api/firms/hotspots'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -95,6 +118,7 @@ export interface RootRouteChildren {
   DataSourcesRoute: typeof DataSourcesRoute
   MapRoute: typeof MapRoute
   EventsIdRoute: typeof EventsIdRoute
+  ApiFirmsHotspotsRoute: typeof ApiFirmsHotspotsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -141,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/firms/hotspots': {
+      id: '/api/firms/hotspots'
+      path: '/api/firms/hotspots'
+      fullPath: '/api/firms/hotspots'
+      preLoaderRoute: typeof ApiFirmsHotspotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -151,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   DataSourcesRoute: DataSourcesRoute,
   MapRoute: MapRoute,
   EventsIdRoute: EventsIdRoute,
+  ApiFirmsHotspotsRoute: ApiFirmsHotspotsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
