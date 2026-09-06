@@ -47,6 +47,20 @@ export interface Detection {
   brightnessTemperature: number;
 }
 
+export interface FirmsMeta {
+  acqDate: string;
+  acqTime: string;
+  satellite: string;
+  instrument: string;
+  confidence: string;
+  daynight: string;
+  scan: number | null;
+  track: number | null;
+  product: string;
+  brightTi4: number | null;
+  brightTi5: number | null;
+}
+
 export interface ThermalEvent {
   id: string;
   latitude: number;
@@ -65,7 +79,7 @@ export interface ThermalEvent {
   landCover: LandCover;
   facilityType: FacilityType;
   facilityName: string;
-  facilityDistance: number; // metres
+  facilityDistance: number; // metres, -1 when no context is available
   verificationStatus: VerificationStatus;
   nearbyRoad: string;
   nearbySettlement: string;
@@ -74,6 +88,14 @@ export interface ThermalEvent {
   spatiallyExpanding: boolean;
   probabilities: { probableClass: ProbableClass; probability: number }[];
   explanationFactors: { factor: string; detail: string; weight: number }[];
+  /** Live FIRMS observations vs bundled sample data. */
+  source?: "LIVE" | "SAMPLE";
+  /** False when no mapped facility is close enough to claim context. */
+  contextAvailable?: boolean;
+  landCoverKnown?: boolean;
+  persistenceKnown?: boolean;
+  lastDetected?: string;
+  firms?: FirmsMeta;
 }
 
 export interface ClassificationResult {

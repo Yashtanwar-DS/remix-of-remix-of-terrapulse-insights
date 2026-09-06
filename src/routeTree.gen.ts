@@ -12,9 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as ClassificationRouteImport } from './routes/classification'
 import { Route as DataSourcesRouteImport } from './routes/data-sources'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsIdRouteImport } from './routes/events.$id'
+import { Route as ApiFirmsHotspotsRouteImport } from './routes/api/firms/hotspots'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,6 +34,11 @@ const AnalyticsRoute = AnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClassificationRoute = ClassificationRouteImport.update({
+  id: '/classification',
+  path: '/classification',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DataSourcesRoute = DataSourcesRouteImport.update({
   id: '/data-sources',
   path: '/data-sources',
@@ -41,9 +49,19 @@ const MapRoute = MapRouteImport.update({
   path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsIndexRoute = EventsIndexRouteImport.update({
+  id: '/events/',
+  path: '/events/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsIdRoute = EventsIdRouteImport.update({
   id: '/events/$id',
   path: '/events/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFirmsHotspotsRoute = ApiFirmsHotspotsRouteImport.update({
+  id: '/api/firms/hotspots',
+  path: '/api/firms/hotspots',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -51,50 +69,82 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
+  '/classification': typeof ClassificationRoute
   '/data-sources': typeof DataSourcesRoute
   '/map': typeof MapRoute
   '/events/$id': typeof EventsIdRoute
+  '/events/': typeof EventsIndexRoute
+  '/api/firms/hotspots': typeof ApiFirmsHotspotsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
+  '/classification': typeof ClassificationRoute
   '/data-sources': typeof DataSourcesRoute
   '/map': typeof MapRoute
   '/events/$id': typeof EventsIdRoute
+  '/events': typeof EventsIndexRoute
+  '/api/firms/hotspots': typeof ApiFirmsHotspotsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
+  '/classification': typeof ClassificationRoute
   '/data-sources': typeof DataSourcesRoute
   '/map': typeof MapRoute
   '/events/$id': typeof EventsIdRoute
+  '/events/': typeof EventsIndexRoute
+  '/api/firms/hotspots': typeof ApiFirmsHotspotsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/alerts' | '/analytics' | '/data-sources' | '/map' | '/events/$id'
+    | '/'
+    | '/alerts'
+    | '/analytics'
+    | '/classification'
+    | '/data-sources'
+    | '/map'
+    | '/events/$id'
+    | '/events/'
+    | '/api/firms/hotspots'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/alerts' | '/analytics' | '/data-sources' | '/map' | '/events/$id'
+  to:
+    | '/'
+    | '/alerts'
+    | '/analytics'
+    | '/classification'
+    | '/data-sources'
+    | '/map'
+    | '/events/$id'
+    | '/events'
+    | '/api/firms/hotspots'
   id:
     | '__root__'
     | '/'
     | '/alerts'
     | '/analytics'
+    | '/classification'
     | '/data-sources'
     | '/map'
     | '/events/$id'
+    | '/events/'
+    | '/api/firms/hotspots'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AlertsRoute: typeof AlertsRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  ClassificationRoute: typeof ClassificationRoute
   DataSourcesRoute: typeof DataSourcesRoute
   MapRoute: typeof MapRoute
   EventsIdRoute: typeof EventsIdRoute
+  EventsIndexRoute: typeof EventsIndexRoute
+  ApiFirmsHotspotsRoute: typeof ApiFirmsHotspotsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -120,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/classification': {
+      id: '/classification'
+      path: '/classification'
+      fullPath: '/classification'
+      preLoaderRoute: typeof ClassificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/data-sources': {
       id: '/data-sources'
       path: '/data-sources'
@@ -134,11 +191,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/': {
+      id: '/events/'
+      path: '/events'
+      fullPath: '/events/'
+      preLoaderRoute: typeof EventsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events/$id': {
       id: '/events/$id'
       path: '/events/$id'
       fullPath: '/events/$id'
       preLoaderRoute: typeof EventsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/firms/hotspots': {
+      id: '/api/firms/hotspots'
+      path: '/api/firms/hotspots'
+      fullPath: '/api/firms/hotspots'
+      preLoaderRoute: typeof ApiFirmsHotspotsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -148,9 +219,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AlertsRoute: AlertsRoute,
   AnalyticsRoute: AnalyticsRoute,
+  ClassificationRoute: ClassificationRoute,
   DataSourcesRoute: DataSourcesRoute,
   MapRoute: MapRoute,
   EventsIdRoute: EventsIdRoute,
+  EventsIndexRoute: EventsIndexRoute,
+  ApiFirmsHotspotsRoute: ApiFirmsHotspotsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

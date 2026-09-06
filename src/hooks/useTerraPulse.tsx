@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { buildDemoEvents } from "@/data/events";
-import { fetchThermalEvents, firmsMode, type DataMode } from "@/services/firmsService";
+import { fetchThermalEvents, type DataMode } from "@/services/firmsService";
 import type { EventFilters, ThermalEvent, VerificationStatus } from "@/types";
 import { confidenceBand, persistenceBand, riskLevel } from "@/utils/labels";
 
@@ -17,6 +17,8 @@ interface Ctx {
   mode: DataMode;
   lastUpdated: string;
   loading: boolean;
+  notice?: string;
+  sources: string[];
   refresh: () => void;
   setStatus: (id: string, status: VerificationStatus) => void;
   filters: EventFilters;
@@ -41,17 +43,22 @@ const TerraPulseContext = createContext<Ctx | null>(null);
 
 export function TerraPulseProvider({ children }: { children: ReactNode }) {
   const [events, setEvents] = useState<ThermalEvent[]>(() => buildDemoEvents(new Date(0)));
-  const [mode, setMode] = useState<DataMode>(firmsMode());
+  const [mode, setMode] = useState<DataMode>("SAMPLE");
   const [lastUpdated, setLastUpdated] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [notice, setNotice] = useState<string | undefined>();
+  const [sources, setSources] = useState<string[]>([]);
   const [filters, setFiltersState] = useState<EventFilters>(emptyFilters);
 
+  // Manual refresh only — no continuous polling of the FIRMS feed.
   const refresh = useCallback(() => {
     setLoading(true);
     void fetchThermalEvents().then((res) => {
       setEvents(res.events);
       setMode(res.mode);
       setLastUpdated(res.fetchedAt);
+      setNotice(res.notice);
+      setSources(res.sources ?? []);
       setLoading(false);
     });
   }, []);
@@ -89,6 +96,8 @@ export function TerraPulseProvider({ children }: { children: ReactNode }) {
     mode,
     lastUpdated,
     loading,
+    notice,
+    sources,
     refresh,
     setStatus,
     filters,

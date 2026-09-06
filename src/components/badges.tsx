@@ -59,7 +59,26 @@ export function ClassBadge({
 export function DemoBadge({ className }: { className?: string }) {
   return (
     <span className={cn(base, "border-risk-low/30 bg-risk-low/10 text-risk-low", className)}>
-      Demo Mode
+      Sample Data
+    </span>
+  );
+}
+
+export function LiveBadge({ live, className }: { live: boolean; className?: string }) {
+  return (
+    <span
+      className={cn(
+        base,
+        live
+          ? "border-ok/30 bg-ok/10 text-ok"
+          : "border-risk-medium/30 bg-risk-medium/10 text-risk-medium",
+        className,
+      )}
+    >
+      <span
+        className={cn("h-1.5 w-1.5 rounded-full", live ? "bg-ok animate-pulse" : "bg-risk-medium")}
+      />
+      {live ? "Live — NASA FIRMS" : "FIRMS connection unavailable"}
     </span>
   );
 }
