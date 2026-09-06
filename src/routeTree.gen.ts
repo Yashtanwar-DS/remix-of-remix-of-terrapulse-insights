@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as ClassificationRouteImport } from './routes/classification'
 import { Route as DataSourcesRouteImport } from './routes/data-sources'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
@@ -31,6 +32,11 @@ const AlertsRoute = AlertsRouteImport.update({
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClassificationRoute = ClassificationRouteImport.update({
+  id: '/classification',
+  path: '/classification',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DataSourcesRoute = DataSourcesRouteImport.update({
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
+  '/classification': typeof ClassificationRoute
   '/data-sources': typeof DataSourcesRoute
   '/map': typeof MapRoute
   '/events/$id': typeof EventsIdRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
+  '/classification': typeof ClassificationRoute
   '/data-sources': typeof DataSourcesRoute
   '/map': typeof MapRoute
   '/events/$id': typeof EventsIdRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
+  '/classification': typeof ClassificationRoute
   '/data-sources': typeof DataSourcesRoute
   '/map': typeof MapRoute
   '/events/$id': typeof EventsIdRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/alerts'
     | '/analytics'
+    | '/classification'
     | '/data-sources'
     | '/map'
     | '/events/$id'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/alerts'
     | '/analytics'
+    | '/classification'
     | '/data-sources'
     | '/map'
     | '/events/$id'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/'
     | '/alerts'
     | '/analytics'
+    | '/classification'
     | '/data-sources'
     | '/map'
     | '/events/$id'
@@ -127,6 +139,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AlertsRoute: typeof AlertsRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  ClassificationRoute: typeof ClassificationRoute
   DataSourcesRoute: typeof DataSourcesRoute
   MapRoute: typeof MapRoute
   EventsIdRoute: typeof EventsIdRoute
@@ -155,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/classification': {
+      id: '/classification'
+      path: '/classification'
+      fullPath: '/classification'
+      preLoaderRoute: typeof ClassificationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/data-sources': {
@@ -199,6 +219,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AlertsRoute: AlertsRoute,
   AnalyticsRoute: AnalyticsRoute,
+  ClassificationRoute: ClassificationRoute,
   DataSourcesRoute: DataSourcesRoute,
   MapRoute: MapRoute,
   EventsIdRoute: EventsIdRoute,
